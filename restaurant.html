@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Ordering Website | bellobello88</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --ink:#14181F; --ink-soft:#565F6E; --ink-faint:#9AA1AC;
+    --border:#E5E7EA; --border-soft:#EFF1F3; --teal:#0D7377; --teal-dim:#E6F1F1;
+    --amber:#C2760C; --green:#1A9850; --radius:10px; --maxw:880px;
+    --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.65; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:var(--teal-dim); color:var(--teal);}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:4px;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  img{max-width:100%; display:block; border-radius:8px; border:1px solid var(--border);}
+
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(250,250,248,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-soft);}
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between;}
+  .back-link{font-family:var(--font-mono); font-size:13px; color:var(--ink-soft); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--teal);}
+  .status-mini{font-family:var(--font-mono); font-size:11.5px; color:var(--amber);}
+
+  .hero{padding:56px 0 40px; border-bottom:1px solid var(--border-soft);}
+  .eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;}
+  h1{font-family:var(--font-display); font-weight:600; font-size:clamp(28px,4vw,40px); line-height:1.15; letter-spacing:-0.01em; margin-bottom:16px;}
+  .hero-tagline{font-size:16px; color:var(--ink-soft); max-width:620px; margin-bottom:28px;}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .pill-link{font-family:var(--font-mono); font-size:13px; padding:8px 16px; border-radius:100px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); color:var(--ink); transition:all .15s ease;}
+  .pill-link.muted{color:var(--ink-faint); cursor:default;}
+
+  .section{padding:52px 0; border-bottom:1px solid var(--border-soft);}
+  .section .label{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .section .label::after{content:''; height:1px; flex:1; background:var(--border);}
+  .section h2{font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:14px;}
+  .section p{font-size:15px; color:var(--ink-soft); max-width:680px;}
+  .section p + p{margin-top:12px;}
+
+  .diagram-wrap{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-top:8px; overflow-x:auto;}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:18px;}
+  .two-col .block h4{font-family:var(--font-display); font-size:14.5px; font-weight:600; margin-bottom:8px; color:var(--ink);}
+  .two-col .block ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .two-col .block li{font-size:14px; color:var(--ink-soft); padding-left:16px; position:relative;}
+  .two-col .block li::before{content:'—'; position:absolute; left:0; color:var(--ink-faint);}
+
+  .feature-note{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 22px; margin-top:8px;}
+  .feature-note .tag-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); margin-bottom:8px;}
+  .feature-note p{color:var(--ink); font-size:14.5px; margin:0;}
+
+  .shot-caption{font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); margin-top:10px;}
+
+  .step-list{display:flex; flex-direction:column; margin-top:20px; max-width:640px;}
+  .step{display:flex; gap:16px;}
+  .step-marker{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+  .step-num{width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--bg); font-family:var(--font-mono); font-size:11.5px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .step-line{flex:1; width:1px; background:var(--border); margin:4px 0;}
+  .step-content{flex:1; padding-bottom:28px; min-width:0;}
+  .step-content .step-title{font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .step-content .step-caption{font-size:13px; color:var(--ink-soft); margin-bottom:10px;}
+  .step-content img{width:100%; height:auto; border-radius:8px; border:1px solid var(--border);}
+
+  .metrics-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-top:8px;}
+  .metric-cell{background:var(--surface); padding:20px 18px;}
+  .metric-cell .num{font-family:var(--font-display); font-size:24px; font-weight:600; color:var(--teal);}
+  .metric-cell .lbl{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:6px;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer a{font-size:14px; color:var(--ink-soft); text-decoration:none;}
+  footer a:hover{color:var(--teal);}
+
+  @media (max-width:640px){
+    .two-col{grid-template-columns:1fr;}
+    .hero{padding:40px 0 32px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="back-link" href="index.html">← Back to portfolio</a>
+    <span class="status-mini">● code private</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Project detail · Spring 2024</div>
+    <h1>Restaurant Ordering Website</h1>
+    <p class="hero-tagline">
+      A full-stack ordering platform for a fictional restaurant — a live menu, real-time availability, and order
+      processing, all driven by a REST API instead of hardcoded front-end data.
+    </p>
+    <div class="meta-row">
+      <span class="pill-link muted">GitHub — code private</span>
+      <span class="pill-link muted">No public deployment</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Problem</div>
+    <h2>Menus shouldn't need a redeploy to change.</h2>
+    <p>
+      A common shortcut in student and prototype projects is to hardcode the menu directly into the front-end —
+      fast to build, but it means every price change, sold-out item, or new dish requires editing and shipping code.
+      This project replaces that with a proper data layer: menu items live in a database and are fetched dynamically,
+      so the storefront reflects reality without a redeploy.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="label">Architecture</div>
+    <h2>How it's put together</h2>
+    <p>A React front-end renders the menu and order flow from live API data. An Express.js REST API sits in front of
+      MongoDB, with Mongoose managing schemas for menu items and orders.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; font-family:'JetBrains Mono',monospace;">
+        <defs>
+          <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#9AA1AC"/>
+          </marker>
+        </defs>
+        <rect x="20" y="80" width="150" height="60" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="95" y="106" text-anchor="middle" font-size="12" fill="#14181F" font-weight="600">React Front-end</text>
+        <text x="95" y="124" text-anchor="middle" font-size="10" fill="#9AA1AC">JSX, Hooks, state</text>
+
+        <line x1="170" y1="110" x2="240" y2="110" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <rect x="240" y="80" width="170" height="60" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="325" y="102" text-anchor="middle" font-size="12" fill="#14181F" font-weight="600">Express.js REST API</text>
+        <text x="325" y="118" text-anchor="middle" font-size="10" fill="#9AA1AC">Menu + order endpoints</text>
+        <text x="325" y="132" text-anchor="middle" font-size="10" fill="#9AA1AC">Node.js runtime</text>
+
+        <line x1="410" y1="110" x2="480" y2="110" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <rect x="480" y="70" width="180" height="80" rx="8" fill="#E6F1F1" stroke="#0D7377"/>
+        <text x="570" y="95" text-anchor="middle" font-size="12" fill="#0D7377" font-weight="600">MongoDB</text>
+        <text x="570" y="112" text-anchor="middle" font-size="10" fill="#0D7377">Mongoose schemas</text>
+        <text x="570" y="129" text-anchor="middle" font-size="10" fill="#0D7377">menu items · orders</text>
+
+        <text x="380" y="190" text-anchor="middle" font-size="10" fill="#9AA1AC">no hardcoded data — every screen reads from the API</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Demo</div>
+    <h2>What it looks like</h2>
+    <p>A responsive menu page pulling live data — pricing, descriptions, and item availability all come from the API
+      rather than being baked into the page.</p>
+    <img src="restaurant-assets/menu1.jpg" alt="Fast React Pizza Co. demo menu page showing dishes, prices, and a sold-out item">
+    <div class="shot-caption">Note the grayed-out "Pizza Salamino" — sold-out state driven by the API, not a manual edit.</div>
+  </section>
+
+  <section class="section">
+    <div class="label">Order Flow</div>
+    <h2>Walking through an order</h2>
+    <p>From landing on the site to tracking a delivery — every step below reads from and writes to the API underneath.</p>
+
+    <div class="step-list">
+      <div class="step">
+        <div class="step-marker"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Enter your name</div>
+          <div class="step-caption">A quick, friendly entry point before browsing the menu.</div>
+          <img src="restaurant-assets/flow1.jpg" alt="Welcome screen asking for the customer's name">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Browse the live menu</div>
+          <div class="step-caption">Every dish, price, and description is fetched from the API on load.</div>
+          <img src="restaurant-assets/flow2.jpg" alt="Full menu list with prices and add to cart buttons">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Add to cart — sold-out items grey out</div>
+          <div class="step-caption">"Capricciosa" is disabled automatically once it's marked sold out in the database, no front-end edit needed.</div>
+          <img src="restaurant-assets/flow2.jpg" alt="Menu showing a sold-out item greyed out next to available ones">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Adjust quantity</div>
+          <div class="step-caption">Increment, decrement, or delete a line item straight from the menu view.</div>
+          <img src="restaurant-assets/flow3.jpg" alt="Quantity controls with plus, minus, and delete on menu items">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">5</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Open the cart</div>
+          <div class="step-caption">A running summary of everything added, with the same quantity controls.</div>
+          <img src="restaurant-assets/flow4.jpg" alt="Cart page listing selected items with totals">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">6</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Checkout — delivery details</div>
+          <div class="step-caption">Name, phone, address (with a "get position" shortcut), and an optional priority upcharge.</div>
+          <img src="restaurant-assets/flow5.jpg" alt="Checkout form with name, phone, address, and priority order option">
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-marker"><div class="step-num">7</div></div>
+        <div class="step-content">
+          <div class="step-title">Order summary and live status</div>
+          <div class="step-caption">Order number, priority badge, estimated delivery time, and a price breakdown — all generated server-side.</div>
+          <img src="restaurant-assets/flow6.jpg" alt="Order status page with delivery countdown and price breakdown">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Technical Decisions</div>
+    <h2>Why it's built this way</h2>
+    <div class="two-col">
+      <div class="block">
+        <h4>Data layer</h4>
+        <ul>
+          <li>MongoDB for a flexible document store that fits menu items with varying fields (add-ons, sizes, tags)</li>
+          <li>Mongoose schemas to keep validation and structure consistent across menu and order documents</li>
+          <li>REST endpoints separate menu reads from order writes, so the storefront stays fast under load</li>
+        </ul>
+      </div>
+      <div class="block">
+        <h4>App layer</h4>
+        <ul>
+          <li>React with Hooks and component state for the menu grid, cart, and order flow</li>
+          <li>Every screen fetches from the API on load — no hardcoded arrays anywhere in the front-end</li>
+          <li>Responsive layout with HTML/CSS/JSX so the same views work on mobile ordering</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Challenges & Trade-offs</div>
+    <h2>What was hard</h2>
+    <p>
+      Moving off hardcoded data meant every component had to handle loading and empty states gracefully — a menu
+      item can now be sold out, missing an image, or mid-update, and the UI needed to degrade sensibly instead of
+      assuming the data was always complete.
+    </p>
+    <p>
+      The trade-off was added complexity in the front-end: components that used to just render a static array now
+      need fetch logic, loading states, and error handling. That cost paid off in flexibility — the menu can change
+      without touching the deployed front-end code.
+    </p>
+  </section>
+
+  <section class="section" style="border-bottom:none;">
+    <div class="label">Results</div>
+    <h2>Impact</h2>
+    <div class="metrics-grid">
+      <div class="metric-cell"><div class="num">0</div><div class="lbl">hardcoded menu items</div></div>
+      <div class="metric-cell"><div class="num">100%</div><div class="lbl">API-driven data</div></div>
+      <div class="metric-cell"><div class="num">Real-time</div><div class="lbl">menu & order updates</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html">← Back to portfolio</a>
+</footer>
+
+</body>
+</html>
