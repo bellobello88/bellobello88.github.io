@@ -56,6 +56,16 @@
   .shots img{width:100%; height:auto;}
   .shots.single{grid-template-columns:1fr; max-width:560px;}
 
+  .step-list{display:flex; flex-direction:column; margin-top:20px; max-width:640px;}
+  .step{display:flex; gap:16px;}
+  .step-marker{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+  .step-num{width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--bg); font-family:var(--font-mono); font-size:11.5px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .step-line{flex:1; width:1px; background:var(--border); margin:4px 0;}
+  .step-content{flex:1; padding-bottom:28px; min-width:0;}
+  .step-content .step-title{font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .step-content .step-caption{font-size:13px; color:var(--ink-soft); margin-bottom:10px;}
+  .step-content img{width:100%; height:auto; border-radius:8px; border:1px solid var(--border);}
+
   /* contribution callout */
   .callout{background:var(--teal-dim); border:1px solid rgba(13,115,119,0.18); border-radius:var(--radius); padding:22px 24px; margin-top:8px;}
   .callout .tag-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); margin-bottom:8px;}
@@ -191,10 +201,31 @@
       <p>Lets users explore affordability and livability metrics across states, counties, and ZIP codes on a live map. Users can
         search a location, switch the map metric, apply filters (income, air quality, crime), and drill from a national view
         down to county and ZIP polygons.</p>
-      <div class="shots">
-        <img src="livewise-assets/map2.jpg" alt="National map view with search and filters">
-        <img src="livewise-assets/map1.jpg" alt="State drill-down showing county polygons for Massachusetts">
-        <img src="livewise-assets/map3.jpg" alt="County-level view with single-family home value metric selected">
+      <div class="step-list">
+        <div class="step">
+          <div class="step-marker"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Start at the national view</div>
+            <div class="step-caption">Search any state, county, or ZIP, and pick a map metric.</div>
+            <img src="livewise-assets/map2.jpg" alt="National map view with search and filters">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">2</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Drill into a state</div>
+            <div class="step-caption">Click through to county polygons, filtered by income, air quality, and crime.</div>
+            <img src="livewise-assets/map1.jpg" alt="State drill-down showing county polygons for Massachusetts">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">3</div></div>
+          <div class="step-content">
+            <div class="step-title">Switch the map metric</div>
+            <div class="step-caption">Re-color the same counties by a different metric, like single-family home value.</div>
+            <img src="livewise-assets/map3.jpg" alt="County-level view with single-family home value metric selected">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -212,14 +243,48 @@
       <p>A guided flow: pick rent vs. buy, enter income and budget, rank the top three factors that matter most, and choose up
         to three preferred states. The engine returns the top five matching counties with a match score and per-factor
         comparisons to the national median.</p>
-      <div class="shots">
-        <img src="livewise-assets/rec1.jpg" alt="Tell us about your plan screen — rent or buy">
-        <img src="livewise-assets/rec2.jpg" alt="Your finances form — income and rent budget">
-        <img src="livewise-assets/rec3.jpg" alt="What matters most to you — ranking priority factors">
-        <img src="livewise-assets/rec4.jpg" alt="Top three US states selection">
-      </div>
-      <div class="shots single" style="margin-top:12px;">
-        <img src="livewise-assets/rec5.jpg" alt="Top counties matched to survey results with match percentages">
+      <div class="step-list">
+        <div class="step">
+          <div class="step-marker"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Rent or buy?</div>
+            <div class="step-caption">The flow branches early based on what the user is looking for.</div>
+            <img src="livewise-assets/rec1.jpg" alt="Tell us about your plan screen — rent or buy">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">2</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Income and budget</div>
+            <div class="step-caption">Monthly income and target rent budget, used to filter affordable matches.</div>
+            <img src="livewise-assets/rec2.jpg" alt="Your finances form — income and rent budget">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">3</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Rank what matters most</div>
+            <div class="step-caption">Top three priorities, ranked from a pool of seven factors: rent, air quality,
+              unemployment rate, health insurance coverage, crime rate, education level, and poverty rate.</div>
+            <img src="livewise-assets/rec3.jpg" alt="What matters most to you — ranking priority factors">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">4</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Preferred states</div>
+            <div class="step-caption">Up to three states to focus the recommendation on.</div>
+            <img src="livewise-assets/rec4.jpg" alt="Top three US states selection">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">5</div></div>
+          <div class="step-content">
+            <div class="step-title">Top five matches</div>
+            <div class="step-caption">Each county gets a match score and a per-factor comparison to the national median.</div>
+            <img src="livewise-assets/rec5.jpg" alt="Top counties matched to survey results with match percentages">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -227,9 +292,23 @@
       <h3>Comparison Dashboard Page</h3>
       <p>Lets users compare two counties side by side across housing, income, employment, education, insurance, air quality,
         and crime. Color coding and a summary line show which county leads in each category.</p>
-      <div class="shots">
-        <img src="livewise-assets/comp1.jpg" alt="Selecting two counties to compare">
-        <img src="livewise-assets/comp2.jpg" alt="Side-by-side comparison table with color-coded results">
+      <div class="step-list">
+        <div class="step">
+          <div class="step-marker"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-content">
+            <div class="step-title">Pick two counties</div>
+            <div class="step-caption">Choose a state and county for each side of the comparison.</div>
+            <img src="livewise-assets/comp1.jpg" alt="Selecting two counties to compare">
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-marker"><div class="step-num">2</div></div>
+          <div class="step-content">
+            <div class="step-title">Side-by-side results</div>
+            <div class="step-caption">Color-coded across housing, income, employment, education, insurance, air quality, and crime.</div>
+            <img src="livewise-assets/comp2.jpg" alt="Side-by-side comparison table with color-coded results">
+          </div>
+        </div>
       </div>
     </div>
   </section>
