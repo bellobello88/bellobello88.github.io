@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveWise — Housing Recommendation App | bellobello88</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --ink:#14181F; --ink-soft:#565F6E; --ink-faint:#9AA1AC;
+    --border:#E5E7EA; --border-soft:#EFF1F3; --teal:#0D7377; --teal-dim:#E6F1F1;
+    --amber:#C2760C; --green:#1A9850; --radius:10px; --maxw:880px;
+    --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.65; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:var(--teal-dim); color:var(--teal);}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:4px;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  img{max-width:100%; display:block; border-radius:8px; border:1px solid var(--border);}
+
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(250,250,248,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-soft);}
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between;}
+  .back-link{font-family:var(--font-mono); font-size:13px; color:var(--ink-soft); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--teal);}
+  .status-mini{font-family:var(--font-mono); font-size:11.5px; color:var(--amber);}
+
+  .hero{padding:56px 0 40px; border-bottom:1px solid var(--border-soft);}
+  .eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;}
+  h1{font-family:var(--font-display); font-weight:600; font-size:clamp(28px,4vw,40px); line-height:1.15; letter-spacing:-0.01em; margin-bottom:16px;}
+  .hero-tagline{font-size:16px; color:var(--ink-soft); max-width:620px; margin-bottom:28px;}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .pill-link{font-family:var(--font-mono); font-size:13px; padding:8px 16px; border-radius:100px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); color:var(--ink); transition:all .15s ease;}
+  .pill-link:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-1px);}
+  .pill-link.primary{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .pill-link.primary:hover{background:#262C36; color:var(--bg);}
+  .pill-link.muted{color:var(--ink-faint); cursor:default;}
+  .pill-link.muted:hover{border-color:var(--border); color:var(--ink-faint); transform:none;}
+
+  .section{padding:52px 0; border-bottom:1px solid var(--border-soft);}
+  .section .label{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .section .label::after{content:''; height:1px; flex:1; background:var(--border);}
+  .section h2{font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:14px;}
+  .section p{font-size:15px; color:var(--ink-soft); max-width:680px;}
+  .section p + p{margin-top:12px;}
+
+  /* feature blocks */
+  .feature{margin-top:36px;}
+  .feature:first-child{margin-top:0;}
+  .feature h3{font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:8px;}
+  .feature p{font-size:14.5px; margin-bottom:14px;}
+  .shots{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:12px;}
+  .shots img{width:100%; height:auto;}
+  .shots.single{grid-template-columns:1fr; max-width:560px;}
+
+  /* contribution callout */
+  .callout{background:var(--teal-dim); border:1px solid rgba(13,115,119,0.18); border-radius:var(--radius); padding:22px 24px; margin-top:8px;}
+  .callout .tag-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); margin-bottom:8px;}
+  .callout p{color:var(--ink); font-size:14.5px;}
+
+  /* two-col lists */
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-top:18px;}
+  .two-col .block h4{font-family:var(--font-display); font-size:14.5px; font-weight:600; margin-bottom:8px; color:var(--ink);}
+  .two-col .block ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .two-col .block li{font-size:14px; color:var(--ink-soft); padding-left:16px; position:relative;}
+  .two-col .block li::before{content:'—'; position:absolute; left:0; color:var(--ink-faint);}
+
+  /* metrics grid */
+  .metrics-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-top:8px;}
+  .metric-cell{background:var(--surface); padding:20px 18px;}
+  .metric-cell .num{font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--teal);}
+  .metric-cell .lbl{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:6px;}
+
+  /* architecture diagram */
+  .diagram-wrap{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-top:8px; overflow-x:auto;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer a{font-size:14px; color:var(--ink-soft); text-decoration:none;}
+  footer a:hover{color:var(--teal);}
+
+  @media (max-width:640px){
+    .two-col{grid-template-columns:1fr;}
+    .hero{padding:40px 0 32px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="back-link" href="index.html">← Back to portfolio</a>
+    <span class="status-mini">● code private</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Project detail · Spring 2026 · CIS 5500</div>
+    <h1>LiveWise — Full-Stack Housing Recommendation App</h1>
+    <p class="hero-tagline">
+      A course project (CIS 5500) that turns scattered public housing, income, crime, and air-quality data into a single searchable,
+      comparable tool for people deciding where to live.
+    </p>
+    <div class="meta-row">
+      <a class="pill-link primary" href="https://livewise-app.onrender.com/" target="_blank" rel="noopener">Live Demo ↗</a>
+      <a class="pill-link" href="https://drive.google.com/file/d/1tDMR_6DxNYOw4_kO5DtmwAChrGBZRgwC/view" target="_blank" rel="noopener">Demo Video ↗</a>
+      <span class="pill-link muted">GitHub — code private</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Problem</div>
+    <h2>Housing decisions shouldn't need eight browser tabs.</h2>
+    <p>
+      Choosing where to live means weighing rent, income growth, crime, school quality, and air quality — usually scattered across
+      separate government datasets and real-estate sites. LiveWise pulls state, county, and ZIP-level data into one SQL-backed
+      explorer so a renter or buyer can search, filter, and compare places without stitching sources together themselves.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="label">Architecture</div>
+    <h2>How it's put together</h2>
+    <p>A React front-end talks to an Express REST API, which queries PostgreSQL on AWS RDS — with materialized views doing the heavy
+      aggregation ahead of time so map and search queries stay fast even across ~26k ZIP codes.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; font-family:'JetBrains Mono',monospace;">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#9AA1AC"/>
+          </marker>
+        </defs>
+        <!-- Browser -->
+        <rect x="20" y="100" width="140" height="60" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="90" y="126" text-anchor="middle" font-size="12" fill="#14181F" font-weight="600">Browser</text>
+        <text x="90" y="144" text-anchor="middle" font-size="10" fill="#9AA1AC">React (JSX, hooks)</text>
+
+        <line x1="160" y1="130" x2="230" y2="130" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <!-- API -->
+        <rect x="230" y="100" width="160" height="60" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="310" y="122" text-anchor="middle" font-size="12" fill="#14181F" font-weight="600">Express.js API</text>
+        <text x="310" y="138" text-anchor="middle" font-size="10" fill="#9AA1AC">REST endpoints</text>
+        <text x="310" y="152" text-anchor="middle" font-size="10" fill="#9AA1AC">Node.js runtime</text>
+
+        <line x1="390" y1="130" x2="460" y2="130" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <!-- DB -->
+        <rect x="460" y="90" width="180" height="80" rx="8" fill="#E6F1F1" stroke="#0D7377"/>
+        <text x="550" y="115" text-anchor="middle" font-size="12" fill="#0D7377" font-weight="600">PostgreSQL</text>
+        <text x="550" y="131" text-anchor="middle" font-size="10" fill="#0D7377">AWS RDS</text>
+        <text x="550" y="149" text-anchor="middle" font-size="10" fill="#0D7377">Materialized views</text>
+        <text x="550" y="163" text-anchor="middle" font-size="10" fill="#0D7377">(state / county / ZIP)</text>
+
+        <!-- Render hosting note -->
+        <line x1="90" y1="100" x2="90" y2="60" stroke="#9AA1AC" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="90" y="45" text-anchor="middle" font-size="10" fill="#9AA1AC">served via Render</text>
+
+        <line x1="310" y1="100" x2="310" y2="60" stroke="#9AA1AC" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="310" y="45" text-anchor="middle" font-size="10" fill="#9AA1AC">CI/CD pipeline</text>
+
+        <text x="380" y="220" text-anchor="middle" font-size="10" fill="#9AA1AC">54 states · 3,223 counties · 26,297 ZIPs</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">My Contribution</div>
+    <h2>What I built</h2>
+    <div class="callout">
+      <div class="tag-label">Personalized Recommendation Page</div>
+      <p>
+        I designed and built the multi-step questionnaire — income and rent budget, ranked priority factors (education, rent,
+        air quality, crime, insurance coverage, poverty), and preferred states — along with the scoring engine behind it.
+        It surfaces the top five matching counties, each with a match percentage and a breakdown of how they compare to
+        national medians on the factors the user ranked highest.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Feature Walkthrough</div>
+    <h2>What the app does</h2>
+
+    <div class="feature">
+      <h3>Interactive Map Page</h3>
+      <p>Lets users explore affordability and livability metrics across states, counties, and ZIP codes on a live map. Users can
+        search a location, switch the map metric, apply filters (income, air quality, crime), and drill from a national view
+        down to county and ZIP polygons.</p>
+      <div class="shots">
+        <img src="livewise-assets/map2.jpg" alt="National map view with search and filters">
+        <img src="livewise-assets/map1.jpg" alt="State drill-down showing county polygons for Massachusetts">
+        <img src="livewise-assets/map3.jpg" alt="County-level view with single-family home value metric selected">
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>Major Cities Exploration Page</h3>
+      <p>Displays housing price trends and key livability indicators for ten major U.S. cities, so users can quickly compare
+        income, rent burden, education, unemployment, poverty, crime, and air quality side by side.</p>
+      <div class="shots">
+        <img src="livewise-assets/cities1.jpg" alt="Major cities comparison — New York City, Los Angeles, and Chicago with home value trends and livability metrics">
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>Personalized Recommendation Page <span style="font-family:var(--font-mono); font-size:11px; color:var(--teal); font-weight:400;">— my contribution</span></h3>
+      <p>A guided flow: pick rent vs. buy, enter income and budget, rank the top three factors that matter most, and choose up
+        to three preferred states. The engine returns the top five matching counties with a match score and per-factor
+        comparisons to the national median.</p>
+      <div class="shots">
+        <img src="livewise-assets/rec1.jpg" alt="Tell us about your plan screen — rent or buy">
+        <img src="livewise-assets/rec2.jpg" alt="Your finances form — income and rent budget">
+        <img src="livewise-assets/rec3.jpg" alt="What matters most to you — ranking priority factors">
+        <img src="livewise-assets/rec4.jpg" alt="Top three US states selection">
+      </div>
+      <div class="shots single" style="margin-top:12px;">
+        <img src="livewise-assets/rec5.jpg" alt="Top counties matched to survey results with match percentages">
+      </div>
+    </div>
+
+    <div class="feature">
+      <h3>Comparison Dashboard Page</h3>
+      <p>Lets users compare two counties side by side across housing, income, employment, education, insurance, air quality,
+        and crime. Color coding and a summary line show which county leads in each category.</p>
+      <div class="shots">
+        <img src="livewise-assets/comp1.jpg" alt="Selecting two counties to compare">
+        <img src="livewise-assets/comp2.jpg" alt="Side-by-side comparison table with color-coded results">
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Technical Decisions</div>
+    <h2>Why it's built this way</h2>
+    <div class="two-col">
+      <div class="block">
+        <h4>Data layer</h4>
+        <ul>
+          <li>Materialized views precompute state/county/ZIP aggregates so map and search queries don't run expensive joins live</li>
+          <li>PostgreSQL on AWS RDS for a managed, relational store that fits the multi-table government datasets</li>
+          <li>Complex SQL for the recommendation scoring, run server-side rather than in the client</li>
+        </ul>
+      </div>
+      <div class="block">
+        <h4>App layer</h4>
+        <ul>
+          <li>React with component-based multi-step forms for the recommendation questionnaire</li>
+          <li>Express REST API as a thin, stateless layer between the front-end and the database</li>
+          <li>CI/CD pipeline for consistent deploys to Render throughout development</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Challenges & Trade-offs</div>
+    <h2>What was hard</h2>
+    <p>
+      Scoring across multiple weighted, user-ranked factors meant designing a formula that stayed intuitive — a "96% match"
+      needs to mean something a non-technical user trusts, not just a number. We handled missing data (some counties have
+      no reported crime rate) by excluding those factors from a county's score rather than penalizing it or faking a value.
+    </p>
+    <p>
+      Performance was the other trade-off: querying live across ~26,000 ZIP codes on every filter change was too slow, so we
+      moved to materialized views refreshed ahead of time — trading a bit of data freshness for consistently fast page loads.
+    </p>
+  </section>
+
+  <section class="section" style="border-bottom:none;">
+    <div class="label">Results</div>
+    <h2>Impact</h2>
+    <div class="metrics-grid">
+      <div class="metric-cell"><div class="num">30%</div><div class="lbl">increase in user engagement</div></div>
+      <div class="metric-cell"><div class="num">90%</div><div class="lbl">faster data retrieval</div></div>
+      <div class="metric-cell"><div class="num">54</div><div class="lbl">states covered</div></div>
+      <div class="metric-cell"><div class="num">26,297</div><div class="lbl">ZIP codes indexed</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html">← Back to portfolio</a>
+</footer>
+
+</body>
+</html>
