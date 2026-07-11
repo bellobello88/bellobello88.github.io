@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Churn MLOps Pipeline | bellobello88</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --ink:#14181F; --ink-soft:#565F6E; --ink-faint:#9AA1AC;
+    --border:#E5E7EA; --border-soft:#EFF1F3; --teal:#0D7377; --teal-dim:#E6F1F1;
+    --amber:#C2760C; --green:#1A9850; --red:#C0392B; --radius:10px; --maxw:880px;
+    --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.65; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:var(--teal-dim); color:var(--teal);}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:4px;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  img{max-width:100%; display:block; border-radius:8px; border:1px solid var(--border);}
+
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(250,250,248,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-soft);}
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between;}
+  .back-link{font-family:var(--font-mono); font-size:13px; color:var(--ink-soft); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--teal);}
+  .status-mini{font-family:var(--font-mono); font-size:11.5px; color:var(--green);}
+
+  .hero{padding:56px 0 40px; border-bottom:1px solid var(--border-soft);}
+  .eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;}
+  h1{font-family:var(--font-display); font-weight:600; font-size:clamp(28px,4vw,40px); line-height:1.15; letter-spacing:-0.01em; margin-bottom:16px;}
+  .hero-tagline{font-size:16px; color:var(--ink-soft); max-width:640px; margin-bottom:28px;}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .pill-link{font-family:var(--font-mono); font-size:13px; padding:8px 16px; border-radius:100px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); color:var(--ink); transition:all .15s ease;}
+  .pill-link:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-1px);}
+  .pill-link.primary{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .pill-link.primary:hover{background:#262C36; color:var(--bg);}
+
+  .section{padding:52px 0; border-bottom:1px solid var(--border-soft);}
+  .section .label{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .section .label::after{content:''; height:1px; flex:1; background:var(--border);}
+  .section h2{font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:14px;}
+  .section p{font-size:15px; color:var(--ink-soft); max-width:680px;}
+  .section p + p{margin-top:12px;}
+
+  .diagram-wrap{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-top:8px; overflow-x:auto;}
+
+  .stack-pills{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+  .stack-pills .tag{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft); background:var(--border-soft); padding:5px 12px; border-radius:6px;}
+
+  .code-block{background:#14181F; color:#E5E7EA; border-radius:8px; padding:16px 18px; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; overflow-x:auto; margin-top:16px;}
+  .code-block .c1{color:#6B7280;}
+  .code-block .c2{color:#5EEAD4;}
+  .code-block .c3{color:#FCD34D;}
+
+  .step-list{display:flex; flex-direction:column; margin-top:24px; max-width:680px;}
+  .step{display:flex; gap:16px;}
+  .step-marker{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+  .step-num{width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--bg); font-family:var(--font-mono); font-size:11.5px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .step-line{flex:1; width:1px; background:var(--border); margin:4px 0;}
+  .step-content{flex:1; padding-bottom:30px; min-width:0;}
+  .step-content .step-title{font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .step-content .step-caption{font-size:13.5px; color:var(--ink-soft); margin-bottom:12px;}
+  .step-content img{width:100%; height:auto;}
+
+  .info-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:13px;}
+  .info-table th{text-align:left; font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); padding:8px 12px; border-bottom:1px solid var(--border);}
+  .info-table td{padding:9px 12px; border-bottom:1px solid var(--border-soft); color:var(--ink-soft);}
+  .info-table td:first-child{color:var(--ink); font-weight:600; font-family:var(--font-mono); font-size:12px;}
+  .info-table tr:last-child td{border-bottom:none;}
+  .info-table td.bad{color:var(--red); font-weight:600;}
+  .info-table td.good{color:var(--green); font-weight:600;}
+  .table-wrap{overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-top:20px;}
+
+  .callout{background:var(--teal-dim); border:1px solid rgba(13,115,119,0.18); border-radius:var(--radius); padding:22px 24px; margin-top:20px;}
+  .callout.warn{background:#FDF1E8; border-color:rgba(194,118,12,0.25);}
+  .callout .tag-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); margin-bottom:8px;}
+  .callout.warn .tag-label{color:var(--amber);}
+  .callout p{color:var(--ink); font-size:14.5px; margin:0; max-width:none;}
+
+  .metrics-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-top:8px;}
+  .metric-cell{background:var(--surface); padding:20px 18px;}
+  .metric-cell .num{font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--teal);}
+  .metric-cell .lbl{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:6px;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer a{font-size:14px; color:var(--ink-soft); text-decoration:none;}
+  footer a:hover{color:var(--teal);}
+
+  @media (max-width:640px){
+    .hero{padding:40px 0 32px;}
+    .info-table{font-size:11.5px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="back-link" href="index.html">← Back to portfolio</a>
+    <span class="status-mini">● public repo</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Project detail · MLOps</div>
+    <h1>Customer Churn MLOps Pipeline</h1>
+    <p class="hero-tagline">
+      An MLOps pipeline for customer churn prediction — PySpark for data processing, a PyTorch MLP for classification,
+      and MLflow tracking every run's parameters, metrics, and model versions end to end.
+    </p>
+    <div class="meta-row">
+      <a class="pill-link primary" href="https://github.com/bellobello88/Customer-Churn-MLops-Pipeline" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Problem</div>
+    <h2>Getting past "it works on my validation set."</h2>
+    <p>
+      A churn model is easy to fool with itself — post a great validation score and it's tempting to call it done,
+      even if what it learned doesn't hold up on anything outside that slice of data. This pipeline treats that risk
+      as something to design against from the start, not catch later. Training and internal validation stay in one
+      split; a separate external test set exists purely to answer one question — did the model generalize, or did it
+      just memorize the validation set?
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="label">Architecture</div>
+    <h2>Data → training → tracking</h2>
+    <p>PySpark handles the data-processing stage on the raw Kaggle dataset, a PyTorch MLP is trained on the result,
+      and every run — parameters, metrics, and the resulting model — is logged to MLflow for comparison and versioning.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; font-family:'JetBrains Mono',monospace;">
+        <defs>
+          <marker id="arrowcc" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#9AA1AC"/>
+          </marker>
+        </defs>
+        <rect x="15" y="80" width="150" height="56" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="90" y="103" text-anchor="middle" font-size="11.5" fill="#14181F" font-weight="600">Raw Kaggle Data</text>
+        <text x="90" y="119" text-anchor="middle" font-size="10" fill="#9AA1AC">70 / 15 / 15 split</text>
+
+        <line x1="165" y1="108" x2="225" y2="108" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowcc)"/>
+
+        <rect x="225" y="80" width="140" height="56" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="295" y="103" text-anchor="middle" font-size="11.5" fill="#14181F" font-weight="600">PySpark</text>
+        <text x="295" y="119" text-anchor="middle" font-size="10" fill="#9AA1AC">data processing</text>
+
+        <line x1="365" y1="108" x2="425" y2="108" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowcc)"/>
+
+        <rect x="425" y="80" width="140" height="56" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="495" y="103" text-anchor="middle" font-size="11.5" fill="#14181F" font-weight="600">PyTorch MLP</text>
+        <text x="495" y="119" text-anchor="middle" font-size="10" fill="#9AA1AC">binary classifier</text>
+
+        <line x1="565" y1="108" x2="625" y2="108" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowcc)"/>
+
+        <rect x="625" y="70" width="140" height="76" rx="8" fill="#E6F1F1" stroke="#0D7377"/>
+        <text x="695" y="93" text-anchor="middle" font-size="11.5" fill="#0D7377" font-weight="600">MLflow</text>
+        <text x="695" y="109" text-anchor="middle" font-size="10" fill="#0D7377">runs · metrics</text>
+        <text x="695" y="123" text-anchor="middle" font-size="10" fill="#0D7377">model registry</text>
+
+        <text x="390" y="180" text-anchor="middle" font-size="10" fill="#9AA1AC">internal validation ≠ external test — tracked separately</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Stack</div>
+    <h2>What it's built with</h2>
+    <div class="stack-pills">
+      <span class="tag">Python</span>
+      <span class="tag">PySpark</span>
+      <span class="tag">PyTorch</span>
+      <span class="tag">MLflow</span>
+      <span class="tag">Model Registry</span>
+      <span class="tag">Experiment Tracking</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Demo Walkthrough</div>
+    <h2>Tracking a model from run to comparison</h2>
+    <p>MLflow is the through-line here — every experiment, hyperparameter, and metric shown below is logged
+      automatically as part of the training run.</p>
+
+    <div class="step-list">
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">MLflow home — experiment tracking set up</div>
+          <div class="step-caption">The "Customer Churn Prediction" experiment, with tracing, evaluation, and prompt tooling available alongside standard model-training tracking.</div>
+          <img src="churn-assets/mlflow_home.jpg" alt="MLflow home screen showing the Customer Churn Prediction experiment and recent experiments list">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">A single run, fully logged</div>
+          <div class="step-caption">21 metrics per run — validation and internal-test accuracy, precision, recall, F1, ROC AUC — plus tags recording the framework (PyTorch), data processing engine (PySpark), task type, and a flagged <code style="font-family:var(--font-mono); font-size:12px;">distribution_shift_detected: true</code>.</div>
+          <img src="churn-assets/run_overview.jpg" alt="MLflow run overview for baseline-mlp-8epochs showing validation metrics and tags including distribution_shift_detected true">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Hyperparameters, version-controlled</div>
+          <div class="step-caption">Batch size, epochs, learning rate, and the train/validation/internal-test split ratio are all defined in source, not tweaked ad hoc.</div>
+          <img src="churn-assets/hyperparams.jpg" alt="Source code showing hyperparameters: batch size 2048, epochs 8, learning rate 0.005, and a 70/15/15 data split">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Multiple runs, each versioned</div>
+          <div class="step-caption">Three runs sweeping the learning rate, each registering a new version of <code style="font-family:var(--font-mono); font-size:12px;">CustomerChurnModel</code> in the registry — v1, v4, v5 — so any run's model is retrievable later. Each sweep is just two lines changed before re-running the script: the learning rate, and a matching run name so it's identifiable in MLflow later.</div>
+          <div class="code-block"><span class="c1"># swept across three runs</span>
+LEARNING_RATE = <span class="c3">0.001</span>   <span class="c1"># → RUN_NAME = "baseline-mlp-8epochs"</span>
+LEARNING_RATE = <span class="c3">0.002</span>   <span class="c1"># → RUN_NAME = "mlp-lr-002-v2"</span>
+LEARNING_RATE = <span class="c3">0.005</span>   <span class="c1"># → RUN_NAME = "mlp-lr-0005-v2"</span></div>
+          <img src="churn-assets/runs_list.jpg" alt="MLflow runs list showing three runs with different learning rates, each linked to a registered model version">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">5</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Comparing runs visually</div>
+          <div class="step-caption">A parallel coordinates plot lines up learning rate against validation loss across the three runs — useful for spotting whether a hyperparameter sweep is trending the right direction before diving into tables.</div>
+          <img src="churn-assets/parallel_coords.jpg" alt="Parallel coordinates plot comparing learning rate against validation loss across three MLflow runs">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">6</div></div>
+        <div class="step-content">
+          <div class="step-title">Run comparison — where it gets honest</div>
+          <div class="step-caption">Side-by-side external test metrics across the three runs. This is the view that surfaced the distribution-shift flag — see below.</div>
+          <img src="churn-assets/run_compare.jpg" alt="MLflow run comparison table showing external test metrics across three runs with a highlighted learning rate diff">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Challenges & Trade-offs</div>
+    <h2>What the external test set caught</h2>
+    <p>
+      Internal validation numbers look strong across every run — accuracy above 98%, ROC AUC above 0.99. Run the same
+      models against the external test split, though, and accuracy drops to roughly 50–51% — essentially chance for a
+      binary classifier. That gap is exactly what the <code style="font-family:var(--font-mono); font-size:12.5px;">distribution_shift_detected</code>
+      tag is flagging: the model learned patterns specific to the internal split that don't transfer.
+    </p>
+    <div class="table-wrap">
+      <table class="info-table">
+        <tr><th>Run</th><th>Learning rate</th><th>Internal test accuracy</th><th>External test accuracy</th></tr>
+        <tr><td>baseline-mlp-8epochs</td><td>0.001</td><td class="good">98.97%</td><td class="bad">51.3%</td></tr>
+        <tr><td>mlp-lr-0005-v2</td><td>0.005</td><td class="good">~99%</td><td class="bad">50.7%</td></tr>
+        <tr><td>mlp-lr-002-v2</td><td>0.002</td><td class="good">~99%</td><td class="bad">51.0%</td></tr>
+      </table>
+    </div>
+    <div class="callout warn">
+      <div class="tag-label">Open problem</div>
+      <p>Tuning the learning rate alone didn't close the gap — external accuracy stayed pinned near chance across all
+        three runs. That points to the issue being about data (feature distribution, leakage, or split construction)
+        rather than model capacity or optimization, and it's the natural next thing to dig into.</p>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom:none;">
+    <div class="label">Results</div>
+    <h2>What came out of it</h2>
+    <div class="metrics-grid">
+      <div class="metric-cell"><div class="num">3</div><div class="lbl">tracked training runs</div></div>
+      <div class="metric-cell"><div class="num">21</div><div class="lbl">metrics logged per run</div></div>
+      <div class="metric-cell"><div class="num">5</div><div class="lbl">model versions registered</div></div>
+      <div class="metric-cell"><div class="num">1</div><div class="lbl">distribution shift caught</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html">← Back to portfolio</a>
+</footer>
+
+</body>
+</html>
