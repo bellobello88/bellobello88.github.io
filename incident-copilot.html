@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Incident Copilot | bellobello88</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF8; --surface:#FFFFFF; --ink:#14181F; --ink-soft:#565F6E; --ink-faint:#9AA1AC;
+    --border:#E5E7EA; --border-soft:#EFF1F3; --teal:#0D7377; --teal-dim:#E6F1F1;
+    --amber:#C2760C; --green:#1A9850; --red:#C0392B; --radius:10px; --maxw:880px;
+    --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.65; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:var(--teal-dim); color:var(--teal);}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:4px;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+  img{max-width:100%; display:block; border-radius:8px; border:1px solid var(--border);}
+
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(250,250,248,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border-soft);}
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between;}
+  .back-link{font-family:var(--font-mono); font-size:13px; color:var(--ink-soft); text-decoration:none; display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--teal);}
+  .status-mini{font-family:var(--font-mono); font-size:11.5px; color:var(--green);}
+
+  .hero{padding:56px 0 40px; border-bottom:1px solid var(--border-soft);}
+  .eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;}
+  h1{font-family:var(--font-display); font-weight:600; font-size:clamp(28px,4vw,40px); line-height:1.15; letter-spacing:-0.01em; margin-bottom:16px;}
+  .hero-tagline{font-size:16px; color:var(--ink-soft); max-width:640px; margin-bottom:28px;}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .pill-link{font-family:var(--font-mono); font-size:13px; padding:8px 16px; border-radius:100px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); color:var(--ink); transition:all .15s ease;}
+  .pill-link:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-1px);}
+  .pill-link.primary{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .pill-link.primary:hover{background:#262C36; color:var(--bg);}
+
+  .section{padding:52px 0; border-bottom:1px solid var(--border-soft);}
+  .section .label{font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .section .label::after{content:''; height:1px; flex:1; background:var(--border);}
+  .section h2{font-family:var(--font-display); font-size:22px; font-weight:600; margin-bottom:14px;}
+  .section p{font-size:15px; color:var(--ink-soft); max-width:680px;}
+  .section p + p{margin-top:12px;}
+
+  .diagram-wrap{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-top:8px; overflow-x:auto;}
+
+  /* tables */
+  .info-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:13.5px;}
+  .info-table th{text-align:left; font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); padding:8px 12px; border-bottom:1px solid var(--border);}
+  .info-table td{padding:9px 12px; border-bottom:1px solid var(--border-soft); color:var(--ink-soft);}
+  .info-table td:first-child{color:var(--ink); font-weight:600; font-family:var(--font-mono); font-size:12.5px;}
+  .info-table tr:last-child td{border-bottom:none;}
+  .table-wrap{overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-top:20px;}
+
+  .stack-pills{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+  .stack-pills .tag{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft); background:var(--border-soft); padding:5px 12px; border-radius:6px;}
+
+  /* capability checklist */
+  .cap-list{display:flex; flex-direction:column; gap:10px; margin-top:20px; max-width:680px;}
+  .cap-item{display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--ink-soft);}
+  .cap-item .cap-mark{color:var(--teal); font-family:var(--font-mono); flex-shrink:0; margin-top:2px;}
+  .cap-item b{color:var(--ink);}
+
+  /* step list (reused pattern) */
+  .step-list{display:flex; flex-direction:column; margin-top:24px; max-width:680px;}
+  .step{display:flex; gap:16px;}
+  .step-marker{display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+  .step-num{width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--bg); font-family:var(--font-mono); font-size:11.5px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .step-num.ok{background:var(--green);}
+  .step-num.warn{background:var(--red);}
+  .step-line{flex:1; width:1px; background:var(--border); margin:4px 0;}
+  .step-content{flex:1; padding-bottom:30px; min-width:0;}
+  .step-content .step-title{font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .step-content .step-caption{font-size:13.5px; color:var(--ink-soft); margin-bottom:12px;}
+  .step-content .step-shots{display:flex; flex-direction:column; gap:10px;}
+  .step-content img{width:100%; height:auto;}
+  .step-content .cap{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:-4px; margin-bottom:4px;}
+
+  .metrics-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-top:8px;}
+  .metric-cell{background:var(--surface); padding:20px 18px;}
+  .metric-cell .num{font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--teal);}
+  .metric-cell .lbl{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:6px;}
+
+  footer{padding:40px 0 60px; text-align:center;}
+  footer a{font-size:14px; color:var(--ink-soft); text-decoration:none;}
+  footer a:hover{color:var(--teal);}
+
+  @media (max-width:640px){
+    .hero{padding:40px 0 32px;}
+    .info-table{font-size:12.5px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="back-link" href="index.html">← Back to portfolio</a>
+    <span class="status-mini">● public repo</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Project detail · Observability / Platform Engineering</div>
+    <h1>AI Incident Copilot</h1>
+    <p class="hero-tagline">
+      An AI-powered observability and incident-response platform for microservices. It simulates a production-style
+      distributed system, collects logs, metrics, and traces, detects anomalies from Prometheus data, and generates
+      incident reports with root-cause hypotheses and recommended actions — all surfaced in a Streamlit copilot dashboard.
+    </p>
+    <div class="meta-row">
+      <a class="pill-link primary" href="https://github.com/bellobello88/ai-incident-copilot" target="_blank" rel="noopener">View on GitHub ↗</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Problem</div>
+    <h2>Incident response is a lot of manual checking.</h2>
+    <p>
+      In real engineering teams, responding to an incident usually means manually checking logs, metrics, dashboards,
+      traces, recent deployments, service dependencies, error rates, and latency spikes — one tab at a time. AI
+      Incident Copilot explores how much of that first pass an assistant can do automatically: collect the signals,
+      detect the anomaly, summarize the likely cause, recommend next steps, and save a snapshot for later review.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="label">Architecture</div>
+    <h2>The detection pipeline</h2>
+    <p>Traffic hits the FastAPI services, which expose Prometheus metrics. The anomaly detector queries those metrics
+      on demand, and the Streamlit dashboard calls the detector to render (and optionally save) an incident report.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; font-family:'JetBrains Mono',monospace;">
+        <defs>
+          <marker id="arrowic" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#9AA1AC"/>
+          </marker>
+        </defs>
+
+        <rect x="10" y="30" width="130" height="52" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="75" y="52" text-anchor="middle" font-size="11" fill="#14181F" font-weight="600">Traffic Generator</text>
+        <text x="75" y="68" text-anchor="middle" font-size="9.5" fill="#9AA1AC">normal / error / slow</text>
+
+        <line x1="140" y1="56" x2="195" y2="56" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowic)"/>
+
+        <rect x="195" y="30" width="150" height="52" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="270" y="52" text-anchor="middle" font-size="11" fill="#14181F" font-weight="600">FastAPI Services</text>
+        <text x="270" y="68" text-anchor="middle" font-size="9.5" fill="#9AA1AC">order · user · inventory</text>
+
+        <line x1="270" y1="82" x2="270" y2="122" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowic)"/>
+        <text x="290" y="106" font-size="9.5" fill="#9AA1AC">exposes /metrics</text>
+
+        <rect x="195" y="122" width="150" height="50" rx="8" fill="#E6F1F1" stroke="#0D7377"/>
+        <text x="270" y="143" text-anchor="middle" font-size="11" fill="#0D7377" font-weight="600">Prometheus</text>
+        <text x="270" y="159" text-anchor="middle" font-size="9.5" fill="#0D7377">scrapes every few sec</text>
+
+        <line x1="345" y1="147" x2="440" y2="147" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowic)"/>
+
+        <rect x="440" y="122" width="160" height="50" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="520" y="143" text-anchor="middle" font-size="11" fill="#14181F" font-weight="600">Anomaly Detector</text>
+        <text x="520" y="159" text-anchor="middle" font-size="9.5" fill="#9AA1AC">error + latency rules</text>
+
+        <line x1="600" y1="147" x2="660" y2="90" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowic)"/>
+
+        <rect x="660" y="30" width="130" height="52" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="725" y="52" text-anchor="middle" font-size="11" fill="#14181F" font-weight="600">Streamlit</text>
+        <text x="725" y="68" text-anchor="middle" font-size="9.5" fill="#9AA1AC">copilot dashboard</text>
+
+        <line x1="600" y1="160" x2="660" y2="210" stroke="#9AA1AC" stroke-width="1.5" marker-end="url(#arrowic)"/>
+
+        <rect x="660" y="200" width="130" height="52" rx="8" fill="#FFFFFF" stroke="#E5E7EA"/>
+        <text x="725" y="222" text-anchor="middle" font-size="11" fill="#14181F" font-weight="600">PostgreSQL</text>
+        <text x="725" y="238" text-anchor="middle" font-size="9.5" fill="#9AA1AC">incident snapshots</text>
+
+        <line x1="270" y1="30" x2="270" y2="-10" stroke="transparent"/>
+        <text x="270" y="215" text-anchor="middle" font-size="9.5" fill="#9AA1AC">also exports traces to Jaeger via OpenTelemetry</text>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Stack</div>
+    <h2>What it's built with</h2>
+    <div class="stack-pills">
+      <span class="tag">Python</span>
+      <span class="tag">FastAPI</span>
+      <span class="tag">Pydantic</span>
+      <span class="tag">PostgreSQL</span>
+      <span class="tag">Docker / Compose</span>
+      <span class="tag">Prometheus</span>
+      <span class="tag">Grafana</span>
+      <span class="tag">Streamlit</span>
+      <span class="tag">OpenTelemetry</span>
+      <span class="tag">Jaeger</span>
+      <span class="tag">httpx</span>
+      <span class="tag">OpenAI (optional)</span>
+      <span class="tag">Pytest</span>
+      <span class="tag">GitHub Actions</span>
+      <span class="tag">Ruff</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="info-table">
+        <tr><th>Component</th><th>Local URL</th><th>Purpose</th></tr>
+        <tr><td>order-service</td><td>localhost:8001</td><td>Order creation, validates users/items</td></tr>
+        <tr><td>user-service</td><td>localhost:8002</td><td>User creation and lookup</td></tr>
+        <tr><td>inventory-service</td><td>localhost:8003</td><td>Item creation and lookup</td></tr>
+        <tr><td>anomaly-detector</td><td>localhost:8004</td><td>Queries Prometheus, generates incident reports</td></tr>
+        <tr><td>traffic-generator</td><td>localhost:8005</td><td>Generates normal, error, slow, mixed traffic</td></tr>
+        <tr><td>incident-dashboard</td><td>localhost:8501</td><td>Streamlit copilot dashboard</td></tr>
+        <tr><td>Prometheus</td><td>localhost:9090</td><td>Scrapes and stores metrics</td></tr>
+        <tr><td>Grafana</td><td>localhost:3000</td><td>Visualizes metrics</td></tr>
+        <tr><td>Jaeger</td><td>localhost:16686</td><td>Visualizes distributed traces</td></tr>
+        <tr><td>PostgreSQL</td><td>localhost:5432</td><td>App data + incident history</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">What This Proves</div>
+    <h2>Core capabilities under test</h2>
+    <p>This isn't just a "is it running" check — it's a walkthrough of the full incident detection pipeline, end to end.</p>
+    <div class="cap-list">
+      <div class="cap-item"><span class="cap-mark">→</span><span><b>Services stay online</b> even while showing elevated error rates or latency — the failure is in behavior, not availability.</span></div>
+      <div class="cap-item"><span class="cap-mark">→</span><span><b>Incidents get detected from metrics</b> — the anomaly detector reasons over Prometheus data, not manual alerts.</span></div>
+      <div class="cap-item"><span class="cap-mark">→</span><span><b>The affected service is identified</b> by name, not just "something is wrong."</span></div>
+      <div class="cap-item"><span class="cap-mark">→</span><span><b>Traces help localize the problem</b> — Jaeger shows which requests were slow or failed, down to the span.</span></div>
+      <div class="cap-item"><span class="cap-mark">→</span><span><b>A summary and next steps get generated</b> automatically — root cause hypothesis plus a ranked action list.</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="label">Test Walkthrough</div>
+    <h2>Running the pipeline end to end</h2>
+    <p>Starting from a healthy baseline, injecting a real failure, and following the signal all the way to an
+      AI-generated incident report.</p>
+
+    <div class="step-list">
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num ok">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Baseline — confirm everything is healthy</div>
+          <div class="step-caption">Prometheus is actively scraping all three services, and a basic <code style="font-family:var(--font-mono); font-size:12px;">up</code> query confirms each target is reporting in.</div>
+          <div class="step-shots">
+            <div class="cap">Status → Target health</div>
+            <img src="incident-assets/prom_targets.jpg" alt="Prometheus target health showing inventory, order, and user services all UP">
+            <div class="cap">Query: up</div>
+            <img src="incident-assets/prom_up.jpg" alt="Prometheus up query returning all three services as healthy">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num warn">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Inject a real failure</div>
+          <div class="step-caption">Each service ships a <code style="font-family:var(--font-mono); font-size:12px;">/simulate/error</code> endpoint. Hitting it on order-service via its Swagger UI returns a real 500 — the failure this whole pipeline is meant to catch.</div>
+          <div class="step-shots">
+            <img src="incident-assets/swagger_error.jpg" alt="Order Service Swagger UI executing /simulate/error and returning a 500 Internal Server Error">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Metrics pick up the anomaly</div>
+          <div class="step-caption">order-service's request and error counters are visible in Prometheus, and the request-rate graph shows a clear spike right when the failure traffic hit.</div>
+          <div class="step-shots">
+            <div class="cap">Query: {__name__=~".*request.*"}</div>
+            <img src="incident-assets/prom_metrics_query.jpg" alt="Prometheus query showing http_requests_total and duration histogram metrics for inventory-service">
+            <div class="cap">sum by (service) (rate(http_requests_total[1m]))</div>
+            <img src="incident-assets/prom_graph2.jpg" alt="Prometheus graph showing a request rate spike for order-service">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Grafana visualizes it across services</div>
+          <div class="step-caption">The AI Incident Copilot Grafana dashboard rolls up total requests, request rate, average latency, and error count — order-service's error count panel spikes while the others stay flat.</div>
+          <div class="step-shots">
+            <img src="incident-assets/grafana.jpg" alt="Grafana dashboard with total requests, request rate, latency, and error count panels by service">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">5</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">Anomaly detector generates an incident report</div>
+          <div class="step-caption">Hitting the detector's <code style="font-family:var(--font-mono); font-size:12px;">/report</code> endpoint directly returns a structured incident: which service, what type of anomaly, severity, the actual error count vs. threshold, and a plain-language message.</div>
+          <div class="step-shots">
+            <img src="incident-assets/report_json.jpg" alt="Anomaly detector JSON report showing incident_detected status for order-service with 33 errors in 5 minutes">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">6</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-title">The copilot dashboard surfaces it</div>
+          <div class="step-caption">The Streamlit dashboard is the single pane of glass — System Status, Active Incidents, Summary, Root Cause Hypothesis, and an LLM-generated analysis all populate from the same detector output shown above. (Screenshot below shows the healthy baseline view — this is the UI shell that renders the incident content once one is active.)</div>
+          <div class="step-shots">
+            <img src="incident-assets/dashboard.jpg" alt="AI Incident Copilot Streamlit dashboard showing system status, active incidents, summary, and root cause hypothesis sections">
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-marker"><div class="step-num">7</div></div>
+        <div class="step-content">
+          <div class="step-title">Jaeger traces pinpoint the request path</div>
+          <div class="step-caption">Filtering Jaeger to order-service surfaces individual traces with span counts and durations — the tool to drill from "order-service is failing" down to the exact request.</div>
+          <div class="step-shots">
+            <img src="incident-assets/jaeger_full.jpg" alt="Jaeger UI showing a list of order-service traces with durations and span counts">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom:none;">
+    <div class="label">Results</div>
+    <h2>What came out of it</h2>
+    <div class="metrics-grid">
+      <div class="metric-cell"><div class="num">6</div><div class="lbl">services in the stack</div></div>
+      <div class="metric-cell"><div class="num">3</div><div class="lbl">signal types (logs, metrics, traces)</div></div>
+      <div class="metric-cell"><div class="num">2</div><div class="lbl">anomaly types detected</div></div>
+      <div class="metric-cell"><div class="num">CI</div><div class="lbl">GitHub Actions + Pytest</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html">← Back to portfolio</a>
+</footer>
+
+</body>
+</html>
